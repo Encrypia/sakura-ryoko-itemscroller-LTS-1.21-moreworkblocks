@@ -23,15 +23,21 @@ import fi.dy.masa.itemscroller.util.Constants;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
 import net.minecraft.world.World;
 
-public class RecipePattern
+public class RecipePattern extends AbstractRecipePattern
 {
-    private ItemStack result = InventoryUtils.EMPTY_STACK;
     private ItemStack[] recipe = new ItemStack[9];
     private RecipeEntry<?> vanillaRecipe;
 
     public RecipePattern()
     {
+        super();
         this.ensureRecipeSizeAndClearRecipe(9);
+    }
+
+    @Override
+    public AbstractRecipePattern.RecipeType getType()
+    {
+        return AbstractRecipePattern.RecipeType.CRAFTING;
     }
 
     public void ensureRecipeSize(int size)
@@ -42,6 +48,7 @@ public class RecipePattern
         }
     }
 
+    @Override
     public void clearRecipe()
     {
         Arrays.fill(this.recipe, InventoryUtils.EMPTY_STACK);
@@ -86,7 +93,8 @@ public class RecipePattern
         return null;
     }
 
-    public void storeCraftingRecipe(Slot slot, HandledScreen<? extends ScreenHandler> gui, boolean clearIfEmpty, boolean fromKeybind, MinecraftClient mc)
+    @Override
+    public void storeRecipe(Slot slot, HandledScreen<? extends ScreenHandler> gui, boolean clearIfEmpty, boolean fromKeybind, MinecraftClient mc)
     {
         SlotRange range = CraftingHandler.getCraftingGridSlots(gui, slot);
 
@@ -131,6 +139,7 @@ public class RecipePattern
         this.vanillaRecipe = other.vanillaRecipe;
     }
 
+    @Override
     public void readFromNBT(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registryManager)
     {
         if (nbt.contains("Result", Constants.NBT.TAG_COMPOUND) && nbt.contains("Ingredients", Constants.NBT.TAG_LIST))
@@ -159,6 +168,7 @@ public class RecipePattern
         }
     }
 
+    @Override
     @Nonnull
     public NbtCompound writeToNBT(@Nonnull DynamicRegistryManager registryManager)
     {
@@ -191,18 +201,6 @@ public class RecipePattern
         return nbt;
     }
 
-    public ItemStack getResult()
-    {
-        if (this.result.isEmpty() == false)
-        {
-            return this.result;
-        }
-        else
-        {
-            return InventoryUtils.EMPTY_STACK;
-        }
-    }
-
     public int getRecipeLength()
     {
         return this.recipe.length;
@@ -213,6 +211,7 @@ public class RecipePattern
         return this.recipe;
     }
 
+    @Override
     public boolean isEmpty()
     {
         boolean empty = true;
@@ -241,11 +240,6 @@ public class RecipePattern
         }
 
         return count;
-    }
-
-    public boolean isValid()
-    {
-        return InventoryUtils.isStackEmpty(this.getResult()) == false;
     }
 
     @Nullable

@@ -14,6 +14,7 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.itemscroller.config.Configs;
+import fi.dy.masa.itemscroller.recipes.AbstractRecipePattern;
 import fi.dy.masa.itemscroller.recipes.RecipePattern;
 import fi.dy.masa.itemscroller.recipes.RecipeStorage;
 import fi.dy.masa.itemscroller.util.AccessorUtils;
@@ -76,9 +77,12 @@ public class RenderEventHandler
                 final int mouseX = fi.dy.masa.malilib.util.InputUtils.getMouseX();
                 final int mouseY = fi.dy.masa.malilib.util.InputUtils.getMouseY();
                 final int recipeId = this.getHoveredRecipeId(mouseX, mouseY, recipes, gui);
-                RecipePattern recipe = recipeId >= 0 ? recipes.getRecipe(recipeId) : recipes.getSelectedRecipe();
+                AbstractRecipePattern recipe = recipeId >= 0 ? recipes.getRecipe(recipeId) : recipes.getSelectedRecipe();
 
-                this.renderRecipeItems(recipe, recipes.getRecipeCountPerPage(), gui, drawContext);
+                if (recipe instanceof RecipePattern craftingRecipe)
+                {
+                    this.renderRecipeItems(craftingRecipe, recipes.getRecipeCountPerPage(), gui, drawContext);
+                }
             }
 
             matrix4fStack.popMatrix();
@@ -120,17 +124,23 @@ public class RenderEventHandler
 
             if (recipeId >= 0)
             {
-                RecipePattern recipe = recipes.getRecipe(recipeId);
-                this.renderHoverTooltip(mouseX, mouseY, recipe, gui, drawContext);
+                AbstractRecipePattern recipe = recipes.getRecipe(recipeId);
+                if (recipe instanceof RecipePattern craftingRecipe)
+                {
+                    this.renderHoverTooltip(mouseX, mouseY, craftingRecipe, gui, drawContext);
+                }
             }
             else if (Configs.Generic.CRAFTING_RENDER_RECIPE_ITEMS.getBooleanValue())
             {
-                RecipePattern recipe = recipes.getSelectedRecipe();
-                ItemStack stack = this.getHoveredRecipeIngredient(mouseX, mouseY, recipe, recipes.getRecipeCountPerPage(), gui);
-
-                if (InventoryUtils.isStackEmpty(stack) == false)
+                AbstractRecipePattern recipe = recipes.getSelectedRecipe();
+                if (recipe instanceof RecipePattern craftingRecipe)
                 {
-                    InventoryOverlay.renderStackToolTip(mouseX, mouseY, stack, this.mc, drawContext);
+                    ItemStack stack = this.getHoveredRecipeIngredient(mouseX, mouseY, craftingRecipe, recipes.getRecipeCountPerPage(), gui);
+
+                    if (InventoryUtils.isStackEmpty(stack) == false)
+                    {
+                        InventoryOverlay.renderStackToolTip(mouseX, mouseY, stack, this.mc, drawContext);
+                    }
                 }
             }
 

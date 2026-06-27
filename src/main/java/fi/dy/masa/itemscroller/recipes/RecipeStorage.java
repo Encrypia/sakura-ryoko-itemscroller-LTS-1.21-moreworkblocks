@@ -27,7 +27,7 @@ public class RecipeStorage
     private static final int MAX_PAGES   = 8;           // 8 Pages of 18 = 144 total slots
     private static final int MAX_RECIPES = 18;          // 8 Pages of 18 = 144 total slots
     private static final RecipeStorage INSTANCE = new RecipeStorage(MAX_RECIPES * MAX_PAGES);
-    private final RecipePattern[] recipes;
+    private final AbstractRecipePattern[] recipes;
     private int selected;
     private boolean dirty;
 
@@ -38,7 +38,7 @@ public class RecipeStorage
 
     public RecipeStorage(int recipeCount)
     {
-        this.recipes = new RecipePattern[recipeCount];
+        this.recipes = new AbstractRecipePattern[recipeCount];
         this.initRecipes();
     }
 
@@ -110,7 +110,7 @@ public class RecipeStorage
      * If the index is invalid, then the first recipe is returned, instead of null.
      */
     @Nonnull
-    public RecipePattern getRecipe(int index)
+    public AbstractRecipePattern getRecipe(int index)
     {
         if (index >= 0 && index < this.recipes.length)
         {
@@ -121,20 +121,35 @@ public class RecipeStorage
     }
 
     @Nonnull
-    public RecipePattern getSelectedRecipe()
+    public AbstractRecipePattern getSelectedRecipe()
     {
         return this.getRecipe(this.getSelection());
     }
 
-    public void storeCraftingRecipeToCurrentSelection(Slot slot, HandledScreen<?> gui, boolean clearIfEmpty, boolean fromKeybind, MinecraftClient mc)
+    public void storeRecipeToCurrentSelection(Slot slot, HandledScreen<?> gui, boolean clearIfEmpty, boolean fromKeybind, MinecraftClient mc)
     {
-        this.storeCraftingRecipe(this.getSelection(), slot, gui, clearIfEmpty, fromKeybind, mc);
+        this.storeRecipe(this.getSelection(), slot, gui, clearIfEmpty, fromKeybind, mc);
     }
 
-    public void storeCraftingRecipe(int index, Slot slot, HandledScreen<?> gui, boolean clearIfEmpty, boolean fromKeybind, MinecraftClient mc)
+    public void storeRecipe(int index, Slot slot, HandledScreen<?> gui, boolean clearIfEmpty, boolean fromKeybind, MinecraftClient mc)
     {
-        this.getRecipe(index).storeCraftingRecipe(slot, gui, clearIfEmpty, fromKeybind, mc);
+        AbstractRecipePattern.RecipeType type = getRecipeTypeForGui(gui);
+        AbstractRecipePattern recipe = this.getRecipe(index);
+        if (recipe.getType() != type)
+        {
+            recipe = createRecipeForType(type);
+            this.recipes[index] = recipe;
+        }
+        recipe.storeRecipe(slot, gui, clearIfEmpty, fromKeybind, mc);
         this.dirty = true;
+    }
+
+    private AbstractRecipePattern.RecipeType getRecipeTypeForGui(HandledScreen<?> gui)
+    {
+        if (gui instanceof net.minecraft.client.gui.screen.ingame.StonecutterScreen) return AbstractRecipePattern.RecipeType.STONECUTTER;
+        if (gui instanceof net.minecraft.client.gui.screen.ingame.AnvilScreen) return AbstractRecipePattern.RecipeType.ANVIL;
+        if (gui instanceof net.minecraft.client.gui.screen.ingame.GrindstoneScreen) return AbstractRecipePattern.RecipeType.GRINDSTONE;
+        return AbstractRecipePattern.RecipeType.CRAFTING;
     }
 
     public void clearRecipe(int index)
@@ -188,7 +203,12 @@ public class RecipeStorage
 
             if (index >= 0 && index < this.recipes.length)
             {
-                this.recipes[index].readFromNBT(tag, registryManager);
+                String type = tag.contains("Type", Constants.NBT.TAG_STRING) ?
+                        tag.getString("Type") : "crafting";
+                AbstractRecipePattern.RecipeType recipeType = AbstractRecipePattern.RecipeType.fromId(type);
+                AbstractRecipePattern recipe = createRecipeForType(recipeType != null ? recipeType : AbstractRecipePattern.RecipeType.CRAFTING);
+                recipe.readFromNBT(tag, registryManager);
+                this.recipes[index] = recipe;
 
                 // TODO 1.21.2+
                 /*
@@ -207,6 +227,18 @@ public class RecipeStorage
         this.changeSelectedRecipe(nbt.getByte("Selected"));
     }
 
+    private AbstractRecipePattern createRecipeForType(AbstractRecipePattern.RecipeType type)
+    {
+        switch (type)
+        {
+            case CRAFTING: return new RecipePattern();
+            case STONECUTTER: return new StonecutterRecipe();
+            case ANVIL: return new AnvilRecipe();
+            case GRINDSTONE: return new GrindstoneRecipe();
+        }
+        return new RecipePattern();
+    }
+
     private NbtCompound writeToNBT(@Nonnull DynamicRegistryManager registry)
     {
         NbtList tagRecipes = new NbtList();
@@ -216,9 +248,10 @@ public class RecipeStorage
         {
             if (this.recipes[i].isValid())
             {
-                RecipePattern entry = this.recipes[i];
+                AbstractRecipePattern entry = this.recipes[i];
                 NbtCompound tag = entry.writeToNBT(registry);
                 tag.putByte("RecipeIndex", (byte) i);
+                tag.putString("Type", entry.getType().getId());
 
                 // TODO 1.21.2+
                 /*

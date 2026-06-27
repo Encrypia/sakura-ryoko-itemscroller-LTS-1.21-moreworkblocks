@@ -55,6 +55,7 @@ import fi.dy.masa.itemscroller.ItemScroller;
 import fi.dy.masa.itemscroller.config.Configs;
 import fi.dy.masa.itemscroller.config.Hotkeys;
 import fi.dy.masa.itemscroller.mixin.recipe.IMixinCraftingResultSlot;
+import fi.dy.masa.itemscroller.recipes.AbstractRecipePattern;
 import fi.dy.masa.itemscroller.recipes.CraftingHandler;
 import fi.dy.masa.itemscroller.recipes.CraftingHandler.SlotRange;
 import fi.dy.masa.itemscroller.recipes.RecipePattern;
@@ -213,7 +214,12 @@ public class InventoryUtils
 
     public static boolean isCraftingSlot(HandledScreen<? extends ScreenHandler> gui, @Nullable Slot slot)
     {
-        return slot != null && CraftingHandler.getCraftingGridSlots(gui, slot) != null;
+        if (slot == null) return false;
+        if (CraftingHandler.getCraftingGridSlots(gui, slot) != null) return true;
+        if (gui instanceof StonecutterScreen && slot.id == 1) return true;
+        if (gui instanceof AnvilScreen && slot.id == 2) return true;
+        if (gui instanceof GrindstoneScreen && slot.id == 2) return true;
+        return false;
     }
 
     /**
@@ -1199,17 +1205,33 @@ public class InventoryUtils
 
             if (changed)
             {
-                InventoryUtils.clearFirstCraftingGridOfItems(recipes.getSelectedRecipe(), gui, false);
+                AbstractRecipePattern recipe = recipes.getSelectedRecipe();
+                if (recipe instanceof RecipePattern)
+                {
+                    InventoryUtils.clearFirstCraftingGridOfItems((RecipePattern) recipe, gui, false);
+                }
             }
             else
             {
-                InventoryUtils.tryMoveItemsToFirstCraftingGrid(recipes.getRecipe(hoveredRecipeId), gui, isShiftDown);
+                AbstractRecipePattern recipe = recipes.getRecipe(hoveredRecipeId);
+                if (recipe instanceof RecipePattern craftingRecipe)
+                {
+                    InventoryUtils.tryMoveItemsToFirstCraftingGrid(craftingRecipe, gui, isShiftDown);
+                }
+                else
+                {
+                    Slot outputSlot = recipe.getOutputSlot(gui);
+                    if (outputSlot != null)
+                    {
+                        recipe.fillInputs(gui, isShiftDown, outputSlot);
+                    }
+                }
             }
 
             // Right click: Also craft the items
             if (isRightClick)
             {
-                Slot outputSlot = CraftingHandler.getFirstCraftingOutputSlotForGui(gui);
+                Slot outputSlot = CraftingHandler.getFirstOutputSlotForGui(gui);
                 boolean dropKeyDown = mc.options.dropKey.isPressed(); // FIXME 1.14
 
                 if (outputSlot != null)
@@ -1288,7 +1310,7 @@ public class InventoryUtils
                                                 boolean moveStacks,
                                                 boolean moveEverything)
     {
-        RecipePattern recipe = recipes.getSelectedRecipe();
+        AbstractRecipePattern recipe = recipes.getSelectedRecipe();
         ItemStack stackRecipeOutput = recipe.getResult();
 
         // Try to craft items
@@ -1302,7 +1324,14 @@ public class InventoryUtils
                 {
                     if (moveEverything)
                     {
-                        craftAsManyItemsAsPossible(recipe, slot, gui);
+                        if (recipe instanceof RecipePattern craftingRecipe)
+                        {
+                            craftAsManyItemsAsPossible(craftingRecipe, slot, gui);
+                        }
+                        else
+                        {
+                            recipe.craftAsManyAsPossible(gui);
+                        }
                     }
                     else if (moveStacks)
                     {
@@ -1317,13 +1346,23 @@ public class InventoryUtils
             // Scrolling over an empty output slot, clear the grid
             else
             {
-                clearCraftingGridOfAllItems(gui, CraftingHandler.getCraftingGridSlots(gui, slot));
+                if (recipe instanceof RecipePattern craftingRecipe)
+                {
+                    clearCraftingGridOfAllItems(gui, CraftingHandler.getCraftingGridSlots(gui, slot));
+                }
             }
         }
         // Try to move items to the grid
         else if (moveToOtherInventory == false && isStackEmpty(stackRecipeOutput) == false)
         {
-            tryMoveItemsToCraftingGridSlots(recipe, slot, gui, moveStacks);
+            if (recipe instanceof RecipePattern craftingRecipe)
+            {
+                tryMoveItemsToCraftingGridSlots(craftingRecipe, slot, gui, moveStacks);
+            }
+            else
+            {
+                recipe.fillInputs(gui, moveStacks, slot);
+            }
         }
 
         return false;
@@ -1595,35 +1634,51 @@ public class InventoryUtils
         }
     }
 
-    public static void craftEverythingPossibleWithCurrentRecipe(RecipePattern recipe,
+    public static void craftEverythingPossibleWithCurrentRecipe(AbstractRecipePattern recipe,
                                                                 HandledScreen<? extends ScreenHandler> gui)
     {
-        Slot slot = CraftingHandler.getFirstCraftingOutputSlotForGui(gui);
-
-        if (slot != null && isStackEmpty(recipe.getResult()) == false)
+        if (recipe instanceof RecipePattern craftingRecipe)
         {
-            SlotRange range = CraftingHandler.getCraftingGridSlots(gui, slot);
+            Slot slot = CraftingHandler.getFirstCraftingOutputSlotForGui(gui);
 
-            if (range != null)
+            if (slot != null && isStackEmpty(recipe.getResult()) == false)
             {
-                // Clear all items from the grid first, to avoid unbalanced stacks
-                if (clearCraftingGridOfItems(recipe, gui, range, false) == false)
-                {
-                    return;
-                }
+                SlotRange range = CraftingHandler.getCraftingGridSlots(gui, slot);
 
-                tryMoveItemsToCraftingGridSlots(recipe, slot, gui, true);
-
-                if (slot.hasStack())
+                if (range != null)
                 {
-                    craftAsManyItemsAsPossible(recipe, slot, gui);
+                    // Clear all items from the grid first, to avoid unbalanced stacks
+                    if (clearCraftingGridOfItems(craftingRecipe, gui, range, false) == false)
+                    {
+                        return;
+                    }
+
+                    tryMoveItemsToCraftingGridSlots(craftingRecipe, slot, gui, true);
+
+                    if (slot.hasStack())
+                    {
+                        craftAsManyItemsAsPossible(craftingRecipe, slot, gui);
+                    }
                 }
             }
         }
+        else
+        {
+            recipe.craftEverything(gui);
+        }
     }
 
-    public static void moveAllCraftingResultsToOtherInventory(RecipePattern recipe,
-                                                              HandledScreen<? extends ScreenHandler> gui)
+    public static void moveAllCraftingResultsToOtherInventory(AbstractRecipePattern recipe,
+                                                               HandledScreen<? extends ScreenHandler> gui)
+    {
+        if (recipe instanceof RecipePattern craftingRecipe)
+        {
+            moveAllCraftingResultsToOtherInventoryImpl(craftingRecipe, gui);
+        }
+    }
+
+    private static void moveAllCraftingResultsToOtherInventoryImpl(RecipePattern recipe,
+                                                                    HandledScreen<? extends ScreenHandler> gui)
     {
         if (isStackEmpty(recipe.getResult()) == false)
         {
@@ -1655,14 +1710,17 @@ public class InventoryUtils
         }
     }
 
-    public static void throwAllCraftingResultsToGround(RecipePattern recipe,
-                                                       HandledScreen<? extends ScreenHandler> gui)
+    public static void throwAllCraftingResultsToGround(AbstractRecipePattern recipe,
+                                                        HandledScreen<? extends ScreenHandler> gui)
     {
-        Slot slot = CraftingHandler.getFirstCraftingOutputSlotForGui(gui);
-
-        if (slot != null && isStackEmpty(recipe.getResult()) == false)
+        if (recipe instanceof RecipePattern craftingRecipe)
         {
-            dropStacks(gui, recipe.getResult(), slot, false);
+            Slot slot = CraftingHandler.getFirstCraftingOutputSlotForGui(gui);
+
+            if (slot != null && isStackEmpty(recipe.getResult()) == false)
+            {
+                dropStacks(gui, recipe.getResult(), slot, false);
+            }
         }
     }
 
@@ -1880,7 +1938,7 @@ public class InventoryUtils
         return false;
     }
 
-    private static void moveItemsFromInventory(HandledScreen<? extends ScreenHandler> gui,
+    public static void moveItemsFromInventory(HandledScreen<? extends ScreenHandler> gui,
                                                int slotTo,
                                                Inventory invSrc,
                                                ItemStack stackTemplate,

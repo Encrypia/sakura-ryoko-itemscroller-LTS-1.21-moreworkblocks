@@ -22,6 +22,7 @@ import fi.dy.masa.itemscroller.ItemScroller;
 import fi.dy.masa.itemscroller.config.Configs;
 import fi.dy.masa.itemscroller.config.Hotkeys;
 import fi.dy.masa.itemscroller.gui.GuiConfigs;
+import fi.dy.masa.itemscroller.recipes.AbstractRecipePattern;
 import fi.dy.masa.itemscroller.recipes.CraftingHandler;
 import fi.dy.masa.itemscroller.recipes.RecipePattern;
 import fi.dy.masa.itemscroller.recipes.RecipeStorage;
@@ -152,7 +153,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
         {
             if (InputUtils.isRecipeViewOpen() && InventoryUtils.isCraftingSlot(gui, slot))
             {
-                recipes.storeCraftingRecipeToCurrentSelection(slot, gui, true, true, mc);
+                recipes.storeRecipeToCurrentSelection(slot, gui, true, true, mc);
                 return true;
             }
         }
@@ -226,7 +227,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
             }
 
             InventoryUtils.bufferInvUpdates = true;
-            Slot outputSlot = CraftingHandler.getFirstCraftingOutputSlotForGui(gui);
+            Slot outputSlot = CraftingHandler.getFirstOutputSlotForGui(gui);
 
             if (outputSlot != null)
             {
@@ -235,22 +236,20 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     ClickPacketBuffer.setShouldBufferClickPackets(true);
                 }
 
-                RecipePattern recipe = RecipeStorage.getInstance().getSelectedRecipe();
+                AbstractRecipePattern recipe = RecipeStorage.getInstance().getSelectedRecipe();
+
+                if (recipe instanceof RecipePattern craftingRecipe)
+                {
 
                 int limit = Configs.Generic.MASS_CRAFT_ITERATIONS.getIntegerValue();
 
-                if (Configs.Generic.MASS_CRAFT_RECIPE_BOOK.getBooleanValue() && recipe.lookupVanillaRecipe(mc.world) != null)
+                if (Configs.Generic.MASS_CRAFT_RECIPE_BOOK.getBooleanValue() && craftingRecipe.lookupVanillaRecipe(mc.world) != null)
                 {
                     InventoryUtils.dontUpdateRecipeBook = 2;
                     for (int i = 0; i < limit; ++i)
                     {
-                        // todo
-                        //InventoryUtils.setInhibitCraftingOutputUpdate(true);
-                        //InventoryUtils.tryClearCursor(gui);
-                        //InventoryUtils.throwAllCraftingResultsToGround(recipe, gui);
-
                         RecipeInputInventory craftingInv = ((IMixinCraftingResultSlot) outputSlot).itemscroller_getCraftingInventory();
-                        if (!recipe.getVanillaRecipe().matches(craftingInv.createRecipeInput(), mc.world))
+                        if (!craftingRecipe.getVanillaRecipe().matches(craftingInv.createRecipeInput(), mc.world))
                         {
                             CraftingHandler.SlotRange range = CraftingHandler.getCraftingGridSlots(gui, outputSlot);
                             final int invSlots = gui.getScreenHandler().slots.size();
@@ -269,20 +268,17 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                             }
                         }
 
-                        mc.interactionManager.clickRecipe(gui.getScreenHandler().syncId, recipe.getVanillaRecipeEntry(), true);
-//                        InventoryUtils.setInhibitCraftingOutputUpdate(false);
-//                        InventoryUtils.updateCraftingOutputSlot(outputSlot);
+                        mc.interactionManager.clickRecipe(gui.getScreenHandler().syncId, craftingRecipe.getVanillaRecipeEntry(), true);
 
                         craftingInv = ((IMixinCraftingResultSlot) outputSlot).itemscroller_getCraftingInventory();
-                        if (recipe.getVanillaRecipe().matches(craftingInv.createRecipeInput(), mc.world))
+                        if (craftingRecipe.getVanillaRecipe().matches(craftingInv.createRecipeInput(), mc.world))
                         {
                             break;
                         }
 
                         InventoryUtils.shiftClickSlot(gui, outputSlot.id);
 
-                        // This isn't required after 1.21, it only needs a single dropStack
-                        for (int k = 0; k < recipe.getResult().getMaxCount(); k++)
+                        for (int k = 0; k < craftingRecipe.getResult().getMaxCount(); k++)
                         {
                             InventoryUtils.dropStack(gui, outputSlot.id);
                         }
@@ -291,7 +287,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     }
 
                     InventoryUtils.tryClearCursor(gui);
-                    InventoryUtils.throwAllCraftingResultsToGround(recipe, gui);
+                    InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
                 }
                 else if (Configs.Generic.MASS_CRAFT_SWAPS.getBooleanValue())
                 {
@@ -299,32 +295,24 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     {
                         InventoryUtils.tryClearCursor(gui);
                         InventoryUtils.setInhibitCraftingOutputUpdate(true);
-                        InventoryUtils.throwAllCraftingResultsToGround(recipe, gui);
-                        InventoryUtils.throwAllNonRecipeItemsToGround(recipe, gui);
+                        InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                        InventoryUtils.throwAllNonRecipeItemsToGround(craftingRecipe, gui);
                         RecipeInputInventory inv = ((IMixinCraftingResultSlot) (outputSlot)).itemscroller_getCraftingInventory();
-                        //System.out.println("Before:");
-                        //debugPrintInv(inv);
                         try
                         {
                             Thread.sleep(0);
                         }
                         catch (InterruptedException ignored) { }
-                        InventoryUtils.setCraftingGridContentsUsingSwaps(gui, mc.player.getInventory(), recipe, outputSlot);
-                        //System.out.println("After:");
-                        //debugPrintInv(inv);
+                        InventoryUtils.setCraftingGridContentsUsingSwaps(gui, mc.player.getInventory(), craftingRecipe, outputSlot);
                         InventoryUtils.setInhibitCraftingOutputUpdate(false);
                         InventoryUtils.updateCraftingOutputSlot(outputSlot);
 
-                        //System.out.printf("Output slot: %s\n", outputSlot.getStack());
-
-                        if (InventoryUtils.areStacksEqual(outputSlot.getStack(), recipe.getResult()) == false)
+                        if (InventoryUtils.areStacksEqual(outputSlot.getStack(), craftingRecipe.getResult()) == false)
                         {
                             break;
                         }
 
                         InventoryUtils.shiftClickSlot(gui, outputSlot.id);
-                        //System.out.println("Shift clicked");
-                        //debugPrintInv(inv);
                     }
                 }
                 else
@@ -335,13 +323,13 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     {
                         InventoryUtils.tryClearCursor(gui);
                         InventoryUtils.setInhibitCraftingOutputUpdate(true);
-                        InventoryUtils.throwAllCraftingResultsToGround(recipe, gui);
-                        InventoryUtils.throwAllNonRecipeItemsToGround(recipe, gui);
-                        InventoryUtils.tryMoveItemsToFirstCraftingGrid(recipe, gui, true);
+                        InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                        InventoryUtils.throwAllNonRecipeItemsToGround(craftingRecipe, gui);
+                        InventoryUtils.tryMoveItemsToFirstCraftingGrid(craftingRecipe, gui, true);
                         InventoryUtils.setInhibitCraftingOutputUpdate(false);
                         InventoryUtils.updateCraftingOutputSlot(outputSlot);
 
-                        if (InventoryUtils.areStacksEqual(outputSlot.getStack(), recipe.getResult()) == false)
+                        if (InventoryUtils.areStacksEqual(outputSlot.getStack(), craftingRecipe.getResult()) == false)
                         {
                             break;
                         }
@@ -352,9 +340,15 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                         }
                         else
                         {
-                            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, recipe.getResult());
+                            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, craftingRecipe.getResult());
                         }
                     }
+                }
+                }
+                else
+                {
+                    recipe.craftEverything(gui);
+                    recipe.craftAsManyAsPossible(gui);
                 }
 
                 ClickPacketBuffer.setShouldBufferClickPackets(false);

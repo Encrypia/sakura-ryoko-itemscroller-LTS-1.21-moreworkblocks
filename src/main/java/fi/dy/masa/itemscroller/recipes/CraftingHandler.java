@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.AnvilScreen;
+import net.minecraft.client.gui.screen.ingame.GrindstoneScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.StonecutterScreen;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import fi.dy.masa.itemscroller.ItemScroller;
@@ -76,6 +79,42 @@ public class CraftingHandler
         }
 
         return null;
+    }
+
+    public static boolean isProcessingGui(Screen gui)
+    {
+        return gui instanceof StonecutterScreen ||
+               gui instanceof AnvilScreen ||
+               gui instanceof GrindstoneScreen;
+    }
+
+    public static void registerProcessingGui(Class<? extends HandledScreen<?>> guiClass)
+    {
+        CRAFTING_GUIS.add(guiClass);
+    }
+
+    @Nullable
+    public static Slot getFirstOutputSlotForGui(HandledScreen<? extends ScreenHandler> gui)
+    {
+        Slot slot = getFirstCraftingOutputSlotForGui(gui);
+
+        if (slot == null)
+        {
+            if (gui instanceof StonecutterScreen)
+            {
+                slot = gui.getScreenHandler().getSlot(1);
+            }
+            else if (gui instanceof AnvilScreen)
+            {
+                slot = gui.getScreenHandler().getSlot(2);
+            }
+            else if (gui instanceof GrindstoneScreen)
+            {
+                slot = gui.getScreenHandler().getSlot(2);
+            }
+        }
+
+        return slot;
     }
 
     public static class CraftingOutputSlot
