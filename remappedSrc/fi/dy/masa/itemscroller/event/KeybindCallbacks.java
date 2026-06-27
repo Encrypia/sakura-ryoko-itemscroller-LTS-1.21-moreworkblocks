@@ -219,9 +219,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
         if (GuiUtils.getCurrentScreen() instanceof HandledScreen<?> gui &&
             (GuiUtils.getCurrentScreen() instanceof CreativeInventoryScreen) == false &&
             Configs.GUI_BLACKLIST.contains(GuiUtils.getCurrentScreen().getClass().getName()) == false &&
-            (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue() ||
-             // 切石机/铁砧/砂轮只支持按住 合成 - 正常合成 按钮批量合成
-             (CraftingHandler.isProcessingGui(gui) && Hotkeys.CRAFT_EVERYTHING.getKeybind().isKeybindHeld())))
+            (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue()))
         {
             if (++this.massCraftTicker < Configs.Generic.MASS_CRAFT_INTERVAL.getIntegerValue())
             {
@@ -349,11 +347,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                 }
                 else
                 {
-                    Slot slot = recipe.getOutputSlot(gui);
-                    if (slot != null)
-                    {
-                        recipe.fillInputs(gui, true, slot);
-                    }
+                    recipe.craftEverything(gui);
                     recipe.craftAsManyAsPossible(gui);
                 }
 

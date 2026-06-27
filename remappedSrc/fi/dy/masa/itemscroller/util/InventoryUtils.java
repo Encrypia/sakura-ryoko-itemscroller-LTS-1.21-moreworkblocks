@@ -212,16 +212,6 @@ public class InventoryUtils
                 Configs.SLOT_BLACKLIST.contains(slot.getClass().getName()) == false;
     }
 
-    public static boolean isProcessingEnabled(HandledScreen<? extends ScreenHandler> gui)
-    {
-        if (gui instanceof StonecutterScreen)
-            return Configs.Toggles.STONECUTTER_FEATURES.getBooleanValue();
-        if (gui instanceof AnvilScreen)
-            return Configs.Toggles.ANVIL_FEATURES.getBooleanValue();
-        if (gui instanceof GrindstoneScreen)
-            return Configs.Toggles.GRINDSTONE_FEATURES.getBooleanValue();
-        return Configs.Toggles.CRAFTING_FEATURES.getBooleanValue();
-    }
     public static boolean isCraftingSlot(HandledScreen<? extends ScreenHandler> gui, @Nullable Slot slot)
     {
         if (slot == null) return false;
@@ -272,7 +262,7 @@ public class InventoryUtils
 
         // Villager handling only happens when scrolling over the trade output slot
         boolean villagerHandling = Configs.Toggles.SCROLL_VILLAGER.getBooleanValue() && gui instanceof MerchantScreen && slot instanceof TradeOutputSlot;
-        boolean craftingHandling = isCraftingSlot(gui, slot) && isProcessingEnabled(gui);
+        boolean craftingHandling = Configs.Toggles.CRAFTING_FEATURES.getBooleanValue() && isCraftingSlot(gui, slot);
         boolean keyActiveMoveEverything = Hotkeys.MODIFIER_MOVE_EVERYTHING.getKeybind().isKeybindHeld();
         boolean keyActiveMoveMatching = Hotkeys.MODIFIER_MOVE_MATCHING.getKeybind().isKeybindHeld();
         boolean keyActiveMoveStacks = Hotkeys.MODIFIER_MOVE_STACK.getKeybind().isKeybindHeld();

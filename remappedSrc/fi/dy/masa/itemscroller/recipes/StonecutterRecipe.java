@@ -96,23 +96,14 @@ public class StonecutterRecipe extends AbstractRecipePattern
         }
 
         Slot inputSlot = handler.getSlot(0);
-        MinecraftClient mc = MinecraftClient.getInstance();
 
-        if (inputSlot.hasStack() && InventoryUtils.areStacksEqual(inputSlot.getStack(), this.input) == false)
+        if (inputSlot.hasStack() && InventoryUtils.areStacksEqual(inputSlot.getStack(), this.input))
         {
-            InventoryUtils.shiftClickSlot(gui, inputSlot.id);
+            return;
         }
 
-        if (inputSlot.hasStack() == false || InventoryUtils.areStacksEqual(inputSlot.getStack(), this.input) == false)
-        {
-            InventoryUtils.tryClearCursor(gui);
-            InventoryUtils.moveItemsFromInventory(gui, 0, mc.player.getInventory(), this.input, fillStacks);
-        }
-
-        if (this.selectedRecipe >= 0)
-        {
-            mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
-        }
+        InventoryUtils.tryClearCursor(gui);
+        InventoryUtils.moveItemsFromInventory(gui, 0, MinecraftClient.getInstance().player.getInventory(), this.input, fillStacks);
     }
 
     @Override
@@ -124,41 +115,6 @@ public class StonecutterRecipe extends AbstractRecipePattern
         {
             InventoryUtils.shiftClickSlot(gui, inputSlot.id);
         }
-    }
-
-    // 只支持按住 合成 - 正常合成 按钮批量合成，单次按下一键合成立即提取
-    @Override
-    public void craftEverything(HandledScreen<? extends ScreenHandler> gui)
-    {
-        Slot outputSlot = this.getOutputSlot(gui);
-        if (outputSlot == null || this.isValid() == false) return;
-
-        this.fillInputs(gui, true, outputSlot);
-    }
-
-    @Override
-    public void craftAsManyAsPossible(HandledScreen<? extends ScreenHandler> gui)
-    {
-        Slot inputSlot = gui.getScreenHandler().getSlot(0);
-        Slot outputSlot = this.getOutputSlot(gui);
-        if (outputSlot == null || inputSlot == null || this.isValid() == false) return;
-
-        if (inputSlot.hasStack() == false ||
-            InventoryUtils.areStacksEqual(inputSlot.getStack(), this.input) == false)
-        {
-            return;
-        }
-
-        MinecraftClient mc = MinecraftClient.getInstance();
-        StonecutterScreenHandler handler = (StonecutterScreenHandler) gui.getScreenHandler();
-
-        if (this.selectedRecipe >= 0 &&
-            handler.getSelectedRecipe() != this.selectedRecipe)
-        {
-            mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
-        }
-
-        InventoryUtils.shiftClickSlot(gui, outputSlot.id);
     }
 
     @Override

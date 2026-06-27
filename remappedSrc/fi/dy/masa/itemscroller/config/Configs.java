@@ -111,9 +111,6 @@ public class Configs implements IConfigHandler
     public static class Toggles
     {
         public static final ConfigBoolean CRAFTING_FEATURES         = new ConfigBoolean("enableCraftingFeatures",           true).apply(TOGGLES_KEY);
-        public static final ConfigBoolean STONECUTTER_FEATURES      = new ConfigBoolean("enableStonecutterFeatures",        false).apply(TOGGLES_KEY);
-        public static final ConfigBoolean ANVIL_FEATURES            = new ConfigBoolean("enableAnvilFeatures",              false).apply(TOGGLES_KEY);
-        public static final ConfigBoolean GRINDSTONE_FEATURES       = new ConfigBoolean("enableGrindstoneFeatures",         false).apply(TOGGLES_KEY);
         public static final ConfigBoolean DROP_MATCHING             = new ConfigBoolean("enableDropkeyDropMatching",        true).apply(TOGGLES_KEY);
         public static final ConfigBoolean RIGHT_CLICK_CRAFT_STACK   = new ConfigBoolean("enableRightClickCraftingOneStack", true).apply(TOGGLES_KEY);
         public static final ConfigBoolean SCROLL_EVERYTHING         = new ConfigBoolean("enableScrollingEverything",        true).apply(TOGGLES_KEY);
@@ -128,9 +125,6 @@ public class Configs implements IConfigHandler
 
         public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
                 CRAFTING_FEATURES,
-                STONECUTTER_FEATURES,
-                ANVIL_FEATURES,
-                GRINDSTONE_FEATURES,
                 DROP_MATCHING,
                 RIGHT_CLICK_CRAFT_STACK,
                 SCROLL_EVERYTHING,

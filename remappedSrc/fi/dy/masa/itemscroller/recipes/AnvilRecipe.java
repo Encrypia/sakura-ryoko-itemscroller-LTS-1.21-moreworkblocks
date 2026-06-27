@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -13,7 +12,6 @@ import net.minecraft.screen.AnvilScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import fi.dy.masa.itemscroller.util.InventoryUtils;
-import fi.dy.masa.itemscroller.mixin.screen.IMixinAnvilScreen;
 
 public class AnvilRecipe extends AbstractRecipePattern
 {
@@ -67,9 +65,8 @@ public class AnvilRecipe extends AbstractRecipePattern
             this.inputRight = rightSlot.hasStack() ? rightSlot.getStack().copy() : InventoryUtils.EMPTY_STACK;
             this.result = slot.getStack().copy();
 
-            TextFieldWidget nameField = ((IMixinAnvilScreen) anvilScreen).itemscroller_getNameField();
-            this.renameText = nameField != null ? nameField.getText() : "";
-            this.hasRename = !this.renameText.isEmpty();
+            this.renameText = handler.newItemName;
+            this.hasRename = this.renameText != null && !this.renameText.isEmpty();
         }
         else if (clearIfEmpty)
         {
@@ -127,8 +124,7 @@ public class AnvilRecipe extends AbstractRecipePattern
             String currentName = handler.newItemName;
             if (!this.renameText.equals(currentName))
             {
-                TextFieldWidget nameField = ((IMixinAnvilScreen) anvilScreen).itemscroller_getNameField();
-                nameField.setText(this.renameText);
+                handler.setNewItemName(this.renameText);
             }
         }
     }
