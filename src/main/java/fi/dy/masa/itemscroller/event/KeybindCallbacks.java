@@ -229,8 +229,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
             (GuiUtils.getCurrentScreen() instanceof CreativeInventoryScreen) == false &&
             Configs.GUI_BLACKLIST.contains(GuiUtils.getCurrentScreen().getClass().getName()) == false &&
             InventoryUtils.isProcessingEnabled(gui) &&
-            (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue() ||
-             Hotkeys.CRAFT_EVERYTHING.getKeybind().isKeybindHeld()))
+            (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue()))
         {
             if (++this.massCraftTicker < Configs.Generic.MASS_CRAFT_INTERVAL.getIntegerValue())
             {
