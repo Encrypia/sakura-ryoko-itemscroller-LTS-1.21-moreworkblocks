@@ -108,10 +108,11 @@ public class EnchantmentRecipe extends AbstractRecipePattern
 
         if (inputSlot.hasStack())
         {
-            if (inputSlot.getStack().hasEnchantments())
-            {
-            InventoryUtils.shiftClickSlot(gui, inputSlot.id);
-            }
+        if (inputSlot.getStack().hasEnchantments())
+        {
+            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
+            return;
+        }
         }
 
         if (!inputSlot.hasStack() ||
@@ -176,7 +177,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
 
         if (inputSlot.getStack().hasEnchantments())
         {
-            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
+            InventoryUtils.shiftClickSlot(gui, inputSlot.id);
             return;
         }
 
@@ -268,6 +269,14 @@ public class EnchantmentRecipe extends AbstractRecipePattern
     @Nonnull
     public ItemStack[] getInputStacksForDisplay()
     {
-        return new ItemStack[] { this.inputStack, new ItemStack(Items.LAPIS_LAZULI) };
+        ItemStack lapisStack = new ItemStack(Items.LAPIS_LAZULI, this.enchantmentOption + 1);
+        return new ItemStack[] { this.inputStack, lapisStack };
+    }
+
+    @Override
+    @Nullable
+    public String getDisplayText()
+    {
+        return "Lv." + (this.enchantmentOption + 1);
     }
 }

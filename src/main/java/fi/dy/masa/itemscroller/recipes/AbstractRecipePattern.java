@@ -107,7 +107,7 @@ public abstract class AbstractRecipePattern
         while (failSafe > 0 && outputSlot.hasStack() &&
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack))
         {
-            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, resultStack);
+            InventoryUtils.shiftClickSlot(gui, outputSlot.id);
 
             if (outputSlot.hasStack() == false ||
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack) == false)
@@ -134,7 +134,7 @@ public abstract class AbstractRecipePattern
         while (failSafe > 0 && outputSlot.hasStack() &&
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack))
         {
-            InventoryUtils.shiftClickSlot(gui, outputSlot.id);
+            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, resultStack);
 
             if (outputSlot.hasStack() == false ||
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack) == false)
