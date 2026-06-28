@@ -22,4 +22,5 @@ Compiling
 
 More Work Block
 =========
-这是一个基于Item Scroller 1.21的修改版，支持了切石机、砂轮和铁砧的批量合成。
+这是一个基于Item Scroller 1.21的修改版，支持了切石机、砂轮、铁砧、织布机、附魔台和锻造台界面中的批量合成/驱魔/附魔/升级。
+(纯vibe coding警告)
