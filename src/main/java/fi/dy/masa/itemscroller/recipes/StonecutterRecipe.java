@@ -158,7 +158,32 @@ public class StonecutterRecipe extends AbstractRecipePattern
             mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
         }
 
-        InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, this.input);
+        InventoryUtils.shiftClickSlot(gui, outputSlot.id);
+    }
+
+    @Override
+    public void craftAsManyAndDrop(HandledScreen<? extends ScreenHandler> gui)
+    {
+        Slot inputSlot = gui.getScreenHandler().getSlot(0);
+        Slot outputSlot = this.getOutputSlot(gui);
+        if (outputSlot == null || inputSlot == null || this.isValid() == false) return;
+
+        if (inputSlot.hasStack() == false ||
+            InventoryUtils.areStacksEqual(inputSlot.getStack(), this.input) == false)
+        {
+            return;
+        }
+
+        MinecraftClient mc = MinecraftClient.getInstance();
+        StonecutterScreenHandler handler = (StonecutterScreenHandler) gui.getScreenHandler();
+
+        if (this.selectedRecipe >= 0 &&
+            handler.getSelectedRecipe() != this.selectedRecipe)
+        {
+            mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
+        }
+
+        InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, this.getResult());
     }
 
     @Override

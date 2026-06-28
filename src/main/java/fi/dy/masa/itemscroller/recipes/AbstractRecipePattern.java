@@ -95,6 +95,33 @@ public abstract class AbstractRecipePattern
         while (failSafe > 0 && outputSlot.hasStack() &&
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack))
         {
+            InventoryUtils.shiftClickSlot(gui, outputSlot.id);
+
+            if (outputSlot.hasStack() == false ||
+                InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack) == false)
+            {
+                this.fillInputs(gui, true, outputSlot);
+            }
+            else
+            {
+                break;
+            }
+
+            failSafe--;
+        }
+    }
+
+    public void craftAsManyAndDrop(HandledScreen<? extends ScreenHandler> gui)
+    {
+        Slot outputSlot = this.getOutputSlot(gui);
+        if (outputSlot == null || this.isValid() == false) return;
+
+        ItemStack resultStack = this.getResult();
+        int failSafe = 1024;
+
+        while (failSafe > 0 && outputSlot.hasStack() &&
+                InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack))
+        {
             InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, resultStack);
 
             if (outputSlot.hasStack() == false ||

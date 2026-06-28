@@ -1396,14 +1396,14 @@ public class InventoryUtils
 
         while (failSafe > 0 && slot.hasStack() && areStacksEqual(slot.getStack(), result))
         {
-            dropStacksWhileHasItem(gui, slot.id, result);
+            shiftClickSlot(gui, slot.id);
 
             // Ran out of some or all ingredients for the recipe
             if (slot.hasStack() == false || areStacksEqual(slot.getStack(), result) == false)
             {
                 tryMoveItemsToCraftingGridSlots(recipe, slot, gui, true);
             }
-            // No change in the result slot after dropping, let's assume the craft failed and stop here
+            // No change in the result slot after shift clicking, let's assume the craft failed and stop here
             else
             {
                 break;

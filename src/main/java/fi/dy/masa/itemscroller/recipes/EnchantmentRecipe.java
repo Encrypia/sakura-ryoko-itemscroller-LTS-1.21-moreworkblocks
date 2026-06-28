@@ -110,7 +110,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
         {
             if (inputSlot.getStack().hasEnchantments())
             {
-            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
+            InventoryUtils.shiftClickSlot(gui, inputSlot.id);
             }
         }
 
@@ -177,6 +177,38 @@ public class EnchantmentRecipe extends AbstractRecipePattern
         if (inputSlot.getStack().hasEnchantments())
         {
             InventoryUtils.shiftClickSlot(gui, inputSlot.id);
+            return;
+        }
+
+        if (inputSlot.getStack().getItem() == this.inputStack.getItem() &&
+            lapisSlot.hasStack() && lapisSlot.getStack().isOf(Items.LAPIS_LAZULI) &&
+            this.enchantmentOption >= 0 && this.enchantmentOption <= 2)
+        {
+            int[] powers = handler.enchantmentPower;
+            if (this.enchantmentOption < powers.length && powers[this.enchantmentOption] > 0)
+            {
+                mc.interactionManager.clickButton(handler.syncId, this.enchantmentOption);
+            }
+        }
+    }
+
+    @Override
+    public void craftAsManyAndDrop(HandledScreen<? extends ScreenHandler> gui)
+    {
+        if (!(gui.getScreenHandler() instanceof EnchantmentScreenHandler handler)) return;
+
+        Slot inputSlot = handler.getSlot(0);
+        Slot lapisSlot = handler.getSlot(1);
+        MinecraftClient mc = MinecraftClient.getInstance();
+
+        if (!inputSlot.hasStack())
+        {
+            return;
+        }
+
+        if (inputSlot.getStack().hasEnchantments())
+        {
+            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
             return;
         }
 

@@ -365,7 +365,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     {
                         recipe.fillInputs(gui, true, slot);
                     }
-                    recipe.craftAsManyAsPossible(gui);
+                    recipe.craftAsManyAndDrop(gui);
                 }
 
                 ClickPacketBuffer.setShouldBufferClickPackets(false);
