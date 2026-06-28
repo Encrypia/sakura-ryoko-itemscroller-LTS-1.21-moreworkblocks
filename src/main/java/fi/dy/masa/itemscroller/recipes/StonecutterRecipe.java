@@ -126,7 +126,7 @@ public class StonecutterRecipe extends AbstractRecipePattern
         }
     }
 
-    // 只支持按住 合成 - 正常合成 按钮批量合成，单次按下一键合成立即提取
+    // 按住 合成 - 正常合成 按钮批量合成并丢弃产物
     @Override
     public void craftEverything(HandledScreen<? extends ScreenHandler> gui)
     {
@@ -134,6 +134,7 @@ public class StonecutterRecipe extends AbstractRecipePattern
         if (outputSlot == null || this.isValid() == false) return;
 
         this.fillInputs(gui, true, outputSlot);
+        this.craftAsManyAsPossible(gui);
     }
 
     @Override
@@ -158,11 +159,11 @@ public class StonecutterRecipe extends AbstractRecipePattern
             mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
         }
 
-        InventoryUtils.shiftClickSlot(gui, outputSlot.id);
+        InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, this.getResult());
     }
 
     @Override
-    public void craftAsManyAndDrop(HandledScreen<? extends ScreenHandler> gui)
+    public void craftAsManyAndKeep(HandledScreen<? extends ScreenHandler> gui)
     {
         Slot inputSlot = gui.getScreenHandler().getSlot(0);
         Slot outputSlot = this.getOutputSlot(gui);
@@ -183,7 +184,7 @@ public class StonecutterRecipe extends AbstractRecipePattern
             mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
         }
 
-        InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, this.getResult());
+        InventoryUtils.shiftClickSlot(gui, outputSlot.id);
     }
 
     @Override
@@ -229,5 +230,12 @@ public class StonecutterRecipe extends AbstractRecipePattern
     public int getSelectedRecipe()
     {
         return this.selectedRecipe;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        return new ItemStack[] { this.input };
     }
 }

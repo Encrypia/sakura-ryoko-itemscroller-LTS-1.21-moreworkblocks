@@ -190,4 +190,15 @@ public class SmithingRecipe extends AbstractRecipePattern
 
         return nbt;
     }
+
+    @Override
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        if (!this.inputTemplate.isEmpty()) list.add(this.inputTemplate);
+        if (!this.inputEquipment.isEmpty()) list.add(this.inputEquipment);
+        if (!this.inputMaterial.isEmpty()) list.add(this.inputMaterial);
+        return list.toArray(new ItemStack[0]);
+    }
 }

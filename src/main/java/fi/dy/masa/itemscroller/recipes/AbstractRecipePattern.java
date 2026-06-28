@@ -84,6 +84,18 @@ public abstract class AbstractRecipePattern
     {
     }
 
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        return new ItemStack[0];
+    }
+
+    @Nullable
+    public String getDisplayText()
+    {
+        return null;
+    }
+
     public void craftAsManyAsPossible(HandledScreen<? extends ScreenHandler> gui)
     {
         Slot outputSlot = this.getOutputSlot(gui);
@@ -95,7 +107,7 @@ public abstract class AbstractRecipePattern
         while (failSafe > 0 && outputSlot.hasStack() &&
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack))
         {
-            InventoryUtils.shiftClickSlot(gui, outputSlot.id);
+            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, resultStack);
 
             if (outputSlot.hasStack() == false ||
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack) == false)
@@ -111,7 +123,7 @@ public abstract class AbstractRecipePattern
         }
     }
 
-    public void craftAsManyAndDrop(HandledScreen<? extends ScreenHandler> gui)
+    public void craftAsManyAndKeep(HandledScreen<? extends ScreenHandler> gui)
     {
         Slot outputSlot = this.getOutputSlot(gui);
         if (outputSlot == null || this.isValid() == false) return;
@@ -122,7 +134,7 @@ public abstract class AbstractRecipePattern
         while (failSafe > 0 && outputSlot.hasStack() &&
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack))
         {
-            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, resultStack);
+            InventoryUtils.shiftClickSlot(gui, outputSlot.id);
 
             if (outputSlot.hasStack() == false ||
                 InventoryUtils.areStacksEqual(outputSlot.getStack(), resultStack) == false)

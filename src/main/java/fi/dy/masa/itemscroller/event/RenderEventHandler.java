@@ -79,10 +79,7 @@ public class RenderEventHandler
                 final int recipeId = this.getHoveredRecipeId(mouseX, mouseY, recipes, gui);
                 AbstractRecipePattern recipe = recipeId >= 0 ? recipes.getRecipe(recipeId) : recipes.getSelectedRecipe();
 
-                if (recipe instanceof RecipePattern craftingRecipe)
-                {
-                    this.renderRecipeItems(craftingRecipe, recipes.getRecipeCountPerPage(), gui, drawContext);
-                }
+                this.renderRecipeInputs(recipe, recipes.getRecipeCountPerPage(), gui, drawContext);
             }
 
             matrix4fStack.popMatrix();
@@ -244,22 +241,33 @@ public class RenderEventHandler
         matrixStack.pop();
     }
 
-    private void renderRecipeItems(RecipePattern recipe, int recipeCountPerPage, HandledScreen<?> gui, DrawContext drawContext)
+    private void renderRecipeInputs(AbstractRecipePattern recipe, int recipeCountPerPage, HandledScreen<?> gui, DrawContext drawContext)
     {
-        ItemStack[] items = recipe.getRecipeItems();
-        final int recipeDimensions = (int) Math.ceil(Math.sqrt(recipe.getRecipeLength()));
-        int x = -3 * 17 + 2;
+        ItemStack[] items = recipe.getInputStacksForDisplay();
+        if (items.length == 0) return;
+
+        final int cols = Math.min(items.length, 3);
+        final int rows = (int) Math.ceil((double) items.length / cols);
+        int x = -(cols * 17) + 2;
         int y = 3 * this.entryHeight;
 
-        for (int i = 0, row = 0; row < recipeDimensions; row++)
+        for (int i = 0, row = 0; row < rows; row++)
         {
-            for (int col = 0; col < recipeDimensions; col++, i++)
+            for (int col = 0; col < cols && i < items.length; col++, i++)
             {
                 int xOff = col * 17;
                 int yOff = row * 17;
 
                 this.renderStackAt(items[i], x + xOff, y + yOff, false, drawContext);
             }
+        }
+
+        String displayText = recipe.getDisplayText();
+        if (displayText != null && !displayText.isEmpty())
+        {
+            TextRenderer font = this.mc.textRenderer;
+            int textY = y + rows * 17 + 2;
+            drawContext.drawText(font, "\"" + displayText + "\"", x, textY, 0xFFC0C0C0, false);
         }
     }
 

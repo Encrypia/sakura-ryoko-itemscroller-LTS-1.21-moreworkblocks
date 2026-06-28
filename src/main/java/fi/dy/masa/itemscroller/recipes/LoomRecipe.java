@@ -172,6 +172,7 @@ public class LoomRecipe extends AbstractRecipePattern
         if (outputSlot == null || this.isValid() == false) return;
 
         this.fillInputs(gui, true, outputSlot);
+        this.craftAsManyAsPossible(gui);
     }
 
     @Override
@@ -227,6 +228,21 @@ public class LoomRecipe extends AbstractRecipePattern
         }
 
         return nbt;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        if (this.inputDye.isEmpty() && this.inputPattern.isEmpty())
+        {
+            return new ItemStack[] { this.inputBanner };
+        }
+        if (this.inputPattern.isEmpty())
+        {
+            return new ItemStack[] { this.inputBanner, this.inputDye };
+        }
+        return new ItemStack[] { this.inputBanner, this.inputDye, this.inputPattern };
     }
 
     private static int findPatternIndex(LoomScreenHandler handler, String patternId)

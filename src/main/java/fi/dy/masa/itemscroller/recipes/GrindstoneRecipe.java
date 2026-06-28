@@ -173,4 +173,15 @@ public class GrindstoneRecipe extends AbstractRecipePattern
     {
         return this.inputBottom;
     }
+
+    @Override
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        if (this.inputBottom.isEmpty())
+        {
+            return new ItemStack[] { this.inputTop };
+        }
+        return new ItemStack[] { this.inputTop, this.inputBottom };
+    }
 }

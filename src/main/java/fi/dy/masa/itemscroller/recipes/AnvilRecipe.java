@@ -214,4 +214,22 @@ public class AnvilRecipe extends AbstractRecipePattern
     {
         return this.hasRename;
     }
+
+    @Override
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        if (this.inputRight.isEmpty())
+        {
+            return new ItemStack[] { this.inputLeft };
+        }
+        return new ItemStack[] { this.inputLeft, this.inputRight };
+    }
+
+    @Override
+    @Nullable
+    public String getDisplayText()
+    {
+        return this.hasRename ? this.renameText : null;
+    }
 }

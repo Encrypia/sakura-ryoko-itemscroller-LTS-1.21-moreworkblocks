@@ -176,7 +176,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
 
         if (inputSlot.getStack().hasEnchantments())
         {
-            InventoryUtils.shiftClickSlot(gui, inputSlot.id);
+            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
             return;
         }
 
@@ -193,7 +193,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
     }
 
     @Override
-    public void craftAsManyAndDrop(HandledScreen<? extends ScreenHandler> gui)
+    public void craftAsManyAndKeep(HandledScreen<? extends ScreenHandler> gui)
     {
         if (!(gui.getScreenHandler() instanceof EnchantmentScreenHandler handler)) return;
 
@@ -208,7 +208,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
 
         if (inputSlot.getStack().hasEnchantments())
         {
-            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
+            InventoryUtils.shiftClickSlot(gui, inputSlot.id);
             return;
         }
 
@@ -262,5 +262,12 @@ public class EnchantmentRecipe extends AbstractRecipePattern
     public void setEnchantmentOption(int option)
     {
         this.enchantmentOption = option;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack[] getInputStacksForDisplay()
+    {
+        return new ItemStack[] { this.inputStack, new ItemStack(Items.LAPIS_LAZULI) };
     }
 }
