@@ -136,17 +136,26 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
 
         if (key == Hotkeys.CRAFT_EVERYTHING.getKeybind())
         {
-            InventoryUtils.craftEverythingPossibleWithCurrentRecipe(recipes.getSelectedRecipe(), gui);
+            if (InventoryUtils.isProcessingEnabled(gui))
+            {
+                InventoryUtils.craftEverythingPossibleWithCurrentRecipe(recipes.getSelectedRecipe(), gui);
+            }
             return true;
         }
         else if (key == Hotkeys.THROW_CRAFT_RESULTS.getKeybind())
         {
-            InventoryUtils.throwAllCraftingResultsToGround(recipes.getSelectedRecipe(), gui);
+            if (InventoryUtils.isProcessingEnabled(gui))
+            {
+                InventoryUtils.throwAllCraftingResultsToGround(recipes.getSelectedRecipe(), gui);
+            }
             return true;
         }
         else if (key == Hotkeys.MOVE_CRAFT_RESULTS.getKeybind())
         {
-            InventoryUtils.moveAllCraftingResultsToOtherInventory(recipes.getSelectedRecipe(), gui);
+            if (InventoryUtils.isProcessingEnabled(gui))
+            {
+                InventoryUtils.moveAllCraftingResultsToOtherInventory(recipes.getSelectedRecipe(), gui);
+            }
             return true;
         }
         else if (key == Hotkeys.STORE_RECIPE.getKeybind())
@@ -219,6 +228,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
         if (GuiUtils.getCurrentScreen() instanceof HandledScreen<?> gui &&
             (GuiUtils.getCurrentScreen() instanceof CreativeInventoryScreen) == false &&
             Configs.GUI_BLACKLIST.contains(GuiUtils.getCurrentScreen().getClass().getName()) == false &&
+            InventoryUtils.isProcessingEnabled(gui) &&
             (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue() ||
              // 切石机/铁砧/砂轮只支持按住 合成 - 正常合成 按钮批量合成
              (CraftingHandler.isProcessingGui(gui) && Hotkeys.CRAFT_EVERYTHING.getKeybind().isKeybindHeld())))

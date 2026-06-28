@@ -214,7 +214,8 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
 
                     if (Configs.Toggles.RIGHT_CLICK_CRAFT_STACK.getBooleanValue() &&
                         isUse && keyState &&
-                        InventoryUtils.isCraftingSlot(gui, slot))
+                        InventoryUtils.isCraftingSlot(gui, slot) &&
+                        InventoryUtils.isProcessingEnabled(gui))
                     {
                         InventoryUtils.rightClickCraftOneStack(gui);
                     }
