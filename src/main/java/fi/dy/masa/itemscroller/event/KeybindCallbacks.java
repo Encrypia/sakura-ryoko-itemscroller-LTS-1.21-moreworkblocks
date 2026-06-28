@@ -250,7 +250,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
 
                 AbstractRecipePattern recipe = RecipeStorage.getInstance().getSelectedRecipe();
 
-                if (recipe instanceof RecipePattern craftingRecipe)
+                if (recipe instanceof RecipePattern craftingRecipe && CraftingHandler.isProcessingGui(gui) == false)
                 {
 
                 int limit = Configs.Generic.MASS_CRAFT_ITERATIONS.getIntegerValue();
