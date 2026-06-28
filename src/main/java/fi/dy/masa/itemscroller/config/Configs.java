@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.GrindstoneScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
+import net.minecraft.client.gui.screen.ingame.SmithingScreen;
 import net.minecraft.client.gui.screen.ingame.StonecutterScreen;
 import net.minecraft.screen.slot.CraftingResultSlot;
 import fi.dy.masa.malilib.config.ConfigUtils;
@@ -117,6 +118,7 @@ public class Configs implements IConfigHandler
         public static final ConfigBoolean ANVIL_FEATURES            = new ConfigBoolean("enableAnvilFeatures",              false).apply(TOGGLES_KEY);
         public static final ConfigBoolean GRINDSTONE_FEATURES       = new ConfigBoolean("enableGrindstoneFeatures",         false).apply(TOGGLES_KEY);
         public static final ConfigBoolean LOOM_FEATURES             = new ConfigBoolean("enableLoomFeatures",               false).apply(TOGGLES_KEY);
+        public static final ConfigBoolean SMITHING_FEATURES         = new ConfigBoolean("enableSmithingFeatures",           false).apply(TOGGLES_KEY);
         public static final ConfigBoolean ENCHANTMENT_FEATURES      = new ConfigBoolean("enableEnchantmentFeatures",        false).apply(TOGGLES_KEY);
         public static final ConfigBoolean DROP_MATCHING             = new ConfigBoolean("enableDropkeyDropMatching",        true).apply(TOGGLES_KEY);
         public static final ConfigBoolean RIGHT_CLICK_CRAFT_STACK   = new ConfigBoolean("enableRightClickCraftingOneStack", true).apply(TOGGLES_KEY);
@@ -136,6 +138,7 @@ public class Configs implements IConfigHandler
                 ANVIL_FEATURES,
                 GRINDSTONE_FEATURES,
                 LOOM_FEATURES,
+                SMITHING_FEATURES,
                 ENCHANTMENT_FEATURES,
                 DROP_MATCHING,
                 RIGHT_CLICK_CRAFT_STACK,
@@ -193,6 +196,7 @@ public class Configs implements IConfigHandler
         CraftingHandler.registerProcessingGui(AnvilScreen.class);
         CraftingHandler.registerProcessingGui(GrindstoneScreen.class);
         CraftingHandler.registerProcessingGui(LoomScreen.class);
+        CraftingHandler.registerProcessingGui(SmithingScreen.class);
         CraftingHandler.registerProcessingGui(EnchantmentScreen.class);
     }
 

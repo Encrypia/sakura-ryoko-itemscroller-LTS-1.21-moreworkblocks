@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.GrindstoneScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.LoomScreen;
+import net.minecraft.client.gui.screen.ingame.SmithingScreen;
 import net.minecraft.client.gui.screen.ingame.StonecutterScreen;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -89,6 +90,7 @@ public class CraftingHandler
                gui instanceof AnvilScreen ||
                gui instanceof GrindstoneScreen ||
                gui instanceof LoomScreen ||
+               gui instanceof SmithingScreen ||
                gui instanceof EnchantmentScreen;
     }
 
@@ -117,6 +119,10 @@ public class CraftingHandler
                 slot = gui.getScreenHandler().getSlot(2);
             }
             else if (gui instanceof LoomScreen)
+            {
+                slot = gui.getScreenHandler().getSlot(3);
+            }
+            else if (gui instanceof SmithingScreen)
             {
                 slot = gui.getScreenHandler().getSlot(3);
             }

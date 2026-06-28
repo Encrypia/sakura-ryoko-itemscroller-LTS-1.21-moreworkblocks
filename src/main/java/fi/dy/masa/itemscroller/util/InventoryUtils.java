@@ -222,6 +222,8 @@ public class InventoryUtils
             return Configs.Toggles.GRINDSTONE_FEATURES.getBooleanValue();
         if (gui instanceof LoomScreen)
             return Configs.Toggles.LOOM_FEATURES.getBooleanValue();
+        if (gui instanceof SmithingScreen)
+            return Configs.Toggles.SMITHING_FEATURES.getBooleanValue();
         if (gui instanceof EnchantmentScreen)
             return Configs.Toggles.ENCHANTMENT_FEATURES.getBooleanValue();
         return Configs.Toggles.CRAFTING_FEATURES.getBooleanValue();
@@ -234,6 +236,7 @@ public class InventoryUtils
         if (gui instanceof AnvilScreen && slot.id == 2) return true;
         if (gui instanceof GrindstoneScreen && slot.id == 2) return true;
         if (gui instanceof LoomScreen && slot.id == 3) return true;
+        if (gui instanceof SmithingScreen && slot.id == 3) return true;
         if (gui instanceof EnchantmentScreen && slot.id == 0) return true;
         return false;
     }

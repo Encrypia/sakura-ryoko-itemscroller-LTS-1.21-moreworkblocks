@@ -20,6 +20,7 @@ public abstract class AbstractRecipePattern
         ANVIL("anvil"),
         GRINDSTONE("grindstone"),
         LOOM("loom"),
+        SMITHING("smithing"),
         ENCHANTMENT("enchantment");
 
         private final String id;

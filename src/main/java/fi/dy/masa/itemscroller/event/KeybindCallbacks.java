@@ -318,7 +318,8 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                         InventoryUtils.setInhibitCraftingOutputUpdate(false);
                         InventoryUtils.updateCraftingOutputSlot(outputSlot);
 
-                        if (InventoryUtils.areStacksEqual(outputSlot.getStack(), craftingRecipe.getResult()) == false)
+                        ItemStack outputStack = outputSlot.getStack();
+                        if (outputStack.isEmpty() || !ItemStack.areItemsEqual(outputStack, craftingRecipe.getResult()))
                         {
                             break;
                         }
@@ -340,7 +341,8 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                         InventoryUtils.setInhibitCraftingOutputUpdate(false);
                         InventoryUtils.updateCraftingOutputSlot(outputSlot);
 
-                        if (InventoryUtils.areStacksEqual(outputSlot.getStack(), craftingRecipe.getResult()) == false)
+                        ItemStack outputStack = outputSlot.getStack();
+                        if (outputStack.isEmpty() || !ItemStack.areItemsEqual(outputStack, craftingRecipe.getResult()))
                         {
                             break;
                         }
@@ -351,7 +353,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                         }
                         else
                         {
-                            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, craftingRecipe.getResult());
+                            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, outputStack);
                         }
                     }
                 }
