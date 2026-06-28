@@ -229,7 +229,8 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
             (GuiUtils.getCurrentScreen() instanceof CreativeInventoryScreen) == false &&
             Configs.GUI_BLACKLIST.contains(GuiUtils.getCurrentScreen().getClass().getName()) == false &&
             InventoryUtils.isProcessingEnabled(gui) &&
-            (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue()))
+            (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue() ||
+             Hotkeys.CRAFT_EVERYTHING.getKeybind().isKeybindHeld()))
         {
             if (++this.massCraftTicker < Configs.Generic.MASS_CRAFT_INTERVAL.getIntegerValue())
             {
@@ -346,13 +347,20 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                             break;
                         }
 
-                        if (Configs.Generic.CARPET_CTRL_Q_CRAFTING.getBooleanValue())
+                        if (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue())
                         {
-                            InventoryUtils.dropStack(gui, outputSlot.id);
+                            if (Configs.Generic.CARPET_CTRL_Q_CRAFTING.getBooleanValue())
+                            {
+                                InventoryUtils.dropStack(gui, outputSlot.id);
+                            }
+                            else
+                            {
+                                InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, outputStack);
+                            }
                         }
                         else
                         {
-                            InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, outputStack);
+                            InventoryUtils.shiftClickSlot(gui, outputSlot.id);
                         }
                     }
                 }
@@ -364,7 +372,14 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     {
                         recipe.fillInputs(gui, true, slot);
                     }
-                    recipe.craftAsManyAndKeep(gui);
+                    if (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue())
+                    {
+                        recipe.craftAsManyAndKeep(gui);
+                    }
+                    else
+                    {
+                        recipe.craftAsManyAsPossible(gui);
+                    }
                 }
 
                 ClickPacketBuffer.setShouldBufferClickPackets(false);
