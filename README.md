@@ -19,3 +19,7 @@ Compiling
 * Open a command prompt/terminal to the repository directory
 * run 'gradlew build'
 * The built jar file will be in build/libs/
+
+More Work Block
+=========
+这是一个基于Item Scroller 1.21的修改版，支持了切石机、砂轮和铁砧的批量合成。
