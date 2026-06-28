@@ -212,6 +212,25 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
                             InventoryUtils.handleRecipeClick(gui, mc, recipes, hoveredRecipeId, isAttack, isUse, isPickBlock, isShiftDown);
                             return true;
                         }
+                        // Pick-blocking over an enchantment button with recipe view open, store recipe with enchantment option
+                        else if (isPickBlock && InputUtils.isRecipeViewOpen() && gui instanceof EnchantmentScreen)
+                        {
+                            int option = getEnchantmentButtonOption(gui, mouseX, mouseY);
+                            if (option >= 0)
+                            {
+                                Slot inputSlot = gui.getScreenHandler().getSlot(0);
+                                if (inputSlot.hasStack())
+                                {
+                                    recipes.storeRecipeToCurrentSelection(inputSlot, gui, false, false, mc);
+                                    AbstractRecipePattern newRecipe = recipes.getSelectedRecipe();
+                                    if (newRecipe instanceof EnchantmentRecipe enchantmentRecipe)
+                                    {
+                                        enchantmentRecipe.setEnchantmentOption(option);
+                                    }
+                                }
+                                cancel = true;
+                            }
+                        }
                         // Pick-blocking over a crafting output slot with the recipe view open, store the recipe
                         else if (isPickBlock && InputUtils.isRecipeViewOpen() && InventoryUtils.isCraftingSlot(gui, slot))
                         {
@@ -289,5 +308,24 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
         ClickPacketBuffer.setShouldBufferClickPackets(false);
 
         return cancel;
+    }
+
+    private static int getEnchantmentButtonOption(HandledScreen<?> gui, int mouseX, int mouseY)
+    {
+        fi.dy.masa.itemscroller.mixin.screen.IMixinScreenWithHandler screen =
+            (fi.dy.masa.itemscroller.mixin.screen.IMixinScreenWithHandler) gui;
+        int guiLeft = screen.itemscroller_getGuiLeft();
+        int guiTop = screen.itemscroller_getGuiTop();
+
+        for (int i = 0; i < 3; i++)
+        {
+            int buttonY = guiTop + 14 + 19 * i;
+            if (mouseX >= guiLeft + 14 && mouseX <= guiLeft + 14 + 108 &&
+                mouseY >= buttonY && mouseY <= buttonY + 19)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }
