@@ -159,6 +159,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
         }
 
         this.fillInputs(gui, true, inputSlot);
+        this.craftAsManyAsPossible(gui);
     }
 
     @Override
