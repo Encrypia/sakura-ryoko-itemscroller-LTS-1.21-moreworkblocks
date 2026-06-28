@@ -220,6 +220,10 @@ public class InventoryUtils
             return Configs.Toggles.ANVIL_FEATURES.getBooleanValue();
         if (gui instanceof GrindstoneScreen)
             return Configs.Toggles.GRINDSTONE_FEATURES.getBooleanValue();
+        if (gui instanceof LoomScreen)
+            return Configs.Toggles.LOOM_FEATURES.getBooleanValue();
+        if (gui instanceof EnchantmentScreen)
+            return Configs.Toggles.ENCHANTMENT_FEATURES.getBooleanValue();
         return Configs.Toggles.CRAFTING_FEATURES.getBooleanValue();
     }
     public static boolean isCraftingSlot(HandledScreen<? extends ScreenHandler> gui, @Nullable Slot slot)
@@ -229,6 +233,8 @@ public class InventoryUtils
         if (gui instanceof StonecutterScreen && slot.id == 1) return true;
         if (gui instanceof AnvilScreen && slot.id == 2) return true;
         if (gui instanceof GrindstoneScreen && slot.id == 2) return true;
+        if (gui instanceof LoomScreen && slot.id == 3) return true;
+        if (gui instanceof EnchantmentScreen && slot.id == 0) return true;
         return false;
     }
 

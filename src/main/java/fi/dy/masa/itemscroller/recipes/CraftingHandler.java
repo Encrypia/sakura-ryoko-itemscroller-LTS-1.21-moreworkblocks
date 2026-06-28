@@ -7,8 +7,10 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
+import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.GrindstoneScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.client.gui.screen.ingame.StonecutterScreen;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -85,7 +87,9 @@ public class CraftingHandler
     {
         return gui instanceof StonecutterScreen ||
                gui instanceof AnvilScreen ||
-               gui instanceof GrindstoneScreen;
+               gui instanceof GrindstoneScreen ||
+               gui instanceof LoomScreen ||
+               gui instanceof EnchantmentScreen;
     }
 
     public static void registerProcessingGui(Class<? extends HandledScreen<?>> guiClass)
@@ -111,6 +115,14 @@ public class CraftingHandler
             else if (gui instanceof GrindstoneScreen)
             {
                 slot = gui.getScreenHandler().getSlot(2);
+            }
+            else if (gui instanceof LoomScreen)
+            {
+                slot = gui.getScreenHandler().getSlot(3);
+            }
+            else if (gui instanceof EnchantmentScreen)
+            {
+                slot = gui.getScreenHandler().getSlot(0);
             }
         }
 

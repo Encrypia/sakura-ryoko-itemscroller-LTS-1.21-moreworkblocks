@@ -10,8 +10,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.client.gui.screen.ingame.CraftingScreen;
+import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.GrindstoneScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.screen.ingame.LoomScreen;
 import net.minecraft.client.gui.screen.ingame.StonecutterScreen;
 import net.minecraft.screen.slot.CraftingResultSlot;
 import fi.dy.masa.malilib.config.ConfigUtils;
@@ -114,6 +116,8 @@ public class Configs implements IConfigHandler
         public static final ConfigBoolean STONECUTTER_FEATURES      = new ConfigBoolean("enableStonecutterFeatures",        false).apply(TOGGLES_KEY);
         public static final ConfigBoolean ANVIL_FEATURES            = new ConfigBoolean("enableAnvilFeatures",              false).apply(TOGGLES_KEY);
         public static final ConfigBoolean GRINDSTONE_FEATURES       = new ConfigBoolean("enableGrindstoneFeatures",         false).apply(TOGGLES_KEY);
+        public static final ConfigBoolean LOOM_FEATURES             = new ConfigBoolean("enableLoomFeatures",               false).apply(TOGGLES_KEY);
+        public static final ConfigBoolean ENCHANTMENT_FEATURES      = new ConfigBoolean("enableEnchantmentFeatures",        false).apply(TOGGLES_KEY);
         public static final ConfigBoolean DROP_MATCHING             = new ConfigBoolean("enableDropkeyDropMatching",        true).apply(TOGGLES_KEY);
         public static final ConfigBoolean RIGHT_CLICK_CRAFT_STACK   = new ConfigBoolean("enableRightClickCraftingOneStack", true).apply(TOGGLES_KEY);
         public static final ConfigBoolean SCROLL_EVERYTHING         = new ConfigBoolean("enableScrollingEverything",        true).apply(TOGGLES_KEY);
@@ -131,6 +135,8 @@ public class Configs implements IConfigHandler
                 STONECUTTER_FEATURES,
                 ANVIL_FEATURES,
                 GRINDSTONE_FEATURES,
+                LOOM_FEATURES,
+                ENCHANTMENT_FEATURES,
                 DROP_MATCHING,
                 RIGHT_CLICK_CRAFT_STACK,
                 SCROLL_EVERYTHING,
@@ -186,6 +192,8 @@ public class Configs implements IConfigHandler
         CraftingHandler.registerProcessingGui(StonecutterScreen.class);
         CraftingHandler.registerProcessingGui(AnvilScreen.class);
         CraftingHandler.registerProcessingGui(GrindstoneScreen.class);
+        CraftingHandler.registerProcessingGui(LoomScreen.class);
+        CraftingHandler.registerProcessingGui(EnchantmentScreen.class);
     }
 
     public static void saveToFile()

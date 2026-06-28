@@ -18,7 +18,9 @@ public abstract class AbstractRecipePattern
         CRAFTING("crafting"),
         STONECUTTER("stonecutter"),
         ANVIL("anvil"),
-        GRINDSTONE("grindstone");
+        GRINDSTONE("grindstone"),
+        LOOM("loom"),
+        ENCHANTMENT("enchantment");
 
         private final String id;
 

@@ -149,6 +149,8 @@ public class RecipeStorage
         if (gui instanceof net.minecraft.client.gui.screen.ingame.StonecutterScreen) return AbstractRecipePattern.RecipeType.STONECUTTER;
         if (gui instanceof net.minecraft.client.gui.screen.ingame.AnvilScreen) return AbstractRecipePattern.RecipeType.ANVIL;
         if (gui instanceof net.minecraft.client.gui.screen.ingame.GrindstoneScreen) return AbstractRecipePattern.RecipeType.GRINDSTONE;
+        if (gui instanceof net.minecraft.client.gui.screen.ingame.LoomScreen) return AbstractRecipePattern.RecipeType.LOOM;
+        if (gui instanceof net.minecraft.client.gui.screen.ingame.EnchantmentScreen) return AbstractRecipePattern.RecipeType.ENCHANTMENT;
         return AbstractRecipePattern.RecipeType.CRAFTING;
     }
 
@@ -235,6 +237,8 @@ public class RecipeStorage
             case STONECUTTER: return new StonecutterRecipe();
             case ANVIL: return new AnvilRecipe();
             case GRINDSTONE: return new GrindstoneRecipe();
+            case LOOM: return new LoomRecipe();
+            case ENCHANTMENT: return new EnchantmentRecipe();
         }
         return new RecipePattern();
     }

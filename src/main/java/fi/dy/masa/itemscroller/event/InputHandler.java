@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.screen.slot.Slot;
@@ -13,6 +14,8 @@ import net.minecraft.util.math.MathHelper;
 import fi.dy.masa.itemscroller.Reference;
 import fi.dy.masa.itemscroller.config.Configs;
 import fi.dy.masa.itemscroller.config.Hotkeys;
+import fi.dy.masa.itemscroller.recipes.AbstractRecipePattern;
+import fi.dy.masa.itemscroller.recipes.EnchantmentRecipe;
 import fi.dy.masa.itemscroller.recipes.RecipeStorage;
 import fi.dy.masa.itemscroller.util.AccessorUtils;
 import fi.dy.masa.itemscroller.util.ClickPacketBuffer;
@@ -63,6 +66,18 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
             int oldIndex = recipes.getSelection();
             int recipesPerPage = recipes.getRecipeCountPerPage();
             int recipeIndexChange = GuiBase.isShiftDown() ? recipesPerPage : recipesPerPage / 2;
+
+            // Shift+1/2/3 in EnchantmentScreen to set enchantment option
+            Screen screen = GuiUtils.getCurrentScreen();
+            if (screen instanceof EnchantmentScreen && GuiBase.isShiftDown() && keyCode >= KeyCodes.KEY_1 && keyCode <= KeyCodes.KEY_3)
+            {
+                AbstractRecipePattern recipe = recipes.getSelectedRecipe();
+                if (recipe instanceof EnchantmentRecipe enchantmentRecipe)
+                {
+                    enchantmentRecipe.setEnchantmentOption(keyCode - GLFW.GLFW_KEY_1);
+                    return true;
+                }
+            }
 
             if (keyCode >= KeyCodes.KEY_1 && keyCode <= KeyCodes.KEY_9)
             {
