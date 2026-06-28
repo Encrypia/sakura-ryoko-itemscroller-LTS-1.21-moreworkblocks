@@ -67,18 +67,6 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
             int recipesPerPage = recipes.getRecipeCountPerPage();
             int recipeIndexChange = GuiBase.isShiftDown() ? recipesPerPage : recipesPerPage / 2;
 
-            // Shift+1/2/3 in EnchantmentScreen to set enchantment option
-            Screen screen = GuiUtils.getCurrentScreen();
-            if (screen instanceof EnchantmentScreen && GuiBase.isShiftDown() && keyCode >= KeyCodes.KEY_1 && keyCode <= KeyCodes.KEY_3)
-            {
-                AbstractRecipePattern recipe = recipes.getSelectedRecipe();
-                if (recipe instanceof EnchantmentRecipe enchantmentRecipe)
-                {
-                    enchantmentRecipe.setEnchantmentOption(keyCode - GLFW.GLFW_KEY_1);
-                    return true;
-                }
-            }
-
             if (keyCode >= KeyCodes.KEY_1 && keyCode <= KeyCodes.KEY_9)
             {
                 index = MathHelper.clamp(keyCode - GLFW.GLFW_KEY_1, 0, 8);
