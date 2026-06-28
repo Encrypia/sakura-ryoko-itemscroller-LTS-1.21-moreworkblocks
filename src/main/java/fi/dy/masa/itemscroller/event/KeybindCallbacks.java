@@ -230,8 +230,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
             Configs.GUI_BLACKLIST.contains(GuiUtils.getCurrentScreen().getClass().getName()) == false &&
             InventoryUtils.isProcessingEnabled(gui) &&
             (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue() ||
-             // 切石机/铁砧/砂轮只支持按住 合成 - 正常合成 按钮批量合成
-             (CraftingHandler.isProcessingGui(gui) && Hotkeys.CRAFT_EVERYTHING.getKeybind().isKeybindHeld())))
+             Hotkeys.CRAFT_EVERYTHING.getKeybind().isKeybindHeld()))
         {
             if (++this.massCraftTicker < Configs.Generic.MASS_CRAFT_INTERVAL.getIntegerValue())
             {
