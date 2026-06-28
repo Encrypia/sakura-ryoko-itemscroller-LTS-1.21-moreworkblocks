@@ -367,11 +367,6 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                 }
                 else
                 {
-                    Slot slot = recipe.getOutputSlot(gui);
-                    if (slot != null)
-                    {
-                        recipe.fillInputs(gui, true, slot);
-                    }
                     if (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue())
                     {
                         recipe.craftAsManyAndKeep(gui);
@@ -379,6 +374,12 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     else
                     {
                         recipe.craftAsManyAsPossible(gui);
+                    }
+
+                    Slot slot = recipe.getOutputSlot(gui);
+                    if (slot != null)
+                    {
+                        recipe.fillInputs(gui, true, slot);
                     }
                 }
 
