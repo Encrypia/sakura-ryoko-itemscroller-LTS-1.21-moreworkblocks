@@ -158,7 +158,7 @@ public class StonecutterRecipe extends AbstractRecipePattern
             mc.interactionManager.clickButton(handler.syncId, this.selectedRecipe);
         }
 
-        InventoryUtils.shiftClickSlot(gui, outputSlot.id);
+        InventoryUtils.dropStacksWhileHasItem(gui, outputSlot.id, this.input);
     }
 
     @Override

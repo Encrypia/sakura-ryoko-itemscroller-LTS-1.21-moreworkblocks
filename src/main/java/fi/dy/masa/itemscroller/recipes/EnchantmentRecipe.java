@@ -110,7 +110,7 @@ public class EnchantmentRecipe extends AbstractRecipePattern
         {
             if (inputSlot.getStack().hasEnchantments())
             {
-                InventoryUtils.shiftClickSlot(gui, inputSlot.id);
+            InventoryUtils.dropStacksWhileHasItem(gui, inputSlot.id, inputSlot.getStack());
             }
         }
 
