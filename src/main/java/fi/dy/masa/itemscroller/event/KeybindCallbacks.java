@@ -253,6 +253,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                 {
 
                 int limit = Configs.Generic.MASS_CRAFT_ITERATIONS.getIntegerValue();
+                boolean isMassCraft = Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue();
 
                 if (Configs.Generic.MASS_CRAFT_RECIPE_BOOK.getBooleanValue() && craftingRecipe.lookupVanillaRecipe(mc.world) != null)
                 {
@@ -298,7 +299,10 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     }
 
                     InventoryUtils.tryClearCursor(gui);
-                    InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                    if (isMassCraft)
+                    {
+                        InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                    }
                 }
                 else if (Configs.Generic.MASS_CRAFT_SWAPS.getBooleanValue())
                 {
@@ -306,7 +310,10 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     {
                         InventoryUtils.tryClearCursor(gui);
                         InventoryUtils.setInhibitCraftingOutputUpdate(true);
-                        InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                        if (isMassCraft)
+                        {
+                            InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                        }
                         InventoryUtils.throwAllNonRecipeItemsToGround(craftingRecipe, gui);
                         RecipeInputInventory inv = ((IMixinCraftingResultSlot) (outputSlot)).itemscroller_getCraftingInventory();
                         try
@@ -335,7 +342,10 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                     {
                         InventoryUtils.tryClearCursor(gui);
                         InventoryUtils.setInhibitCraftingOutputUpdate(true);
-                        InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                        if (isMassCraft)
+                        {
+                            InventoryUtils.throwAllCraftingResultsToGround(craftingRecipe, gui);
+                        }
                         InventoryUtils.throwAllNonRecipeItemsToGround(craftingRecipe, gui);
                         InventoryUtils.tryMoveItemsToFirstCraftingGrid(craftingRecipe, gui, true);
                         InventoryUtils.setInhibitCraftingOutputUpdate(false);
@@ -347,7 +357,7 @@ public class KeybindCallbacks implements IHotkeyCallback, IClientTickHandler
                             break;
                         }
 
-                        if (Hotkeys.MASS_CRAFT.getKeybind().isKeybindHeld() || Configs.Generic.MASS_CRAFT_HOLD.getBooleanValue())
+                        if (isMassCraft)
                         {
                             if (Configs.Generic.CARPET_CTRL_Q_CRAFTING.getBooleanValue())
                             {
