@@ -124,14 +124,18 @@ public class AnvilRecipe extends AbstractRecipePattern
 
         if (this.hasRename && gui instanceof AnvilScreen anvilScreen)
         {
+            if (leftSlot.hasStack() == false)
+            {
+                return;
+            }
             if (this.inputRight.isEmpty() == false && rightSlot.hasStack() == false)
             {
                 return;
             }
-            String currentName = handler.newItemName;
+            TextFieldWidget nameField = ((IMixinAnvilScreen) anvilScreen).itemscroller_getNameField();
+            String currentName = nameField.getText();
             if (!this.renameText.equals(currentName))
             {
-                TextFieldWidget nameField = ((IMixinAnvilScreen) anvilScreen).itemscroller_getNameField();
                 nameField.setText(this.renameText);
             }
         }
