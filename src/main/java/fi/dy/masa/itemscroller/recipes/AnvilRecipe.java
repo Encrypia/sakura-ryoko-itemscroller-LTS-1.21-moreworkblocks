@@ -138,6 +138,7 @@ public class AnvilRecipe extends AbstractRecipePattern
             {
                 nameField.setText(this.renameText);
             }
+            nameField.setFocused(false);
         }
     }
 
