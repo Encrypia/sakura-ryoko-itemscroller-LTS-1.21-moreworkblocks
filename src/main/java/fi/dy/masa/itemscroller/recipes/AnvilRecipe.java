@@ -124,6 +124,10 @@ public class AnvilRecipe extends AbstractRecipePattern
 
         if (this.hasRename && gui instanceof AnvilScreen anvilScreen)
         {
+            if (this.inputRight.isEmpty() == false && rightSlot.hasStack() == false)
+            {
+                return;
+            }
             String currentName = handler.newItemName;
             if (!this.renameText.equals(currentName))
             {
